@@ -2,7 +2,7 @@ console.log('hi')
 const section_1_anchor = document.getElementById('section_1_anchor');
 // consider event delegation
 
-const sections_nav_bar = [
+const sections_anchors_nav_bar = [
     document.getElementById('section_1_anchor'),
     document.getElementById('section_2_anchor'),
     document.getElementById('section_3_anchor')];
@@ -11,12 +11,6 @@ const sections = [
     document.getElementById('section1'),
     document.getElementById('section2'),
     document.getElementById('section3')];
-
-section_1_anchor.addEventListener('click', function (event) {
-    event.preventDefault();
-    sections[0].scrollIntoView();
-}, false);
-
 
 function isElementVisible(el) {
     const rect = el.getBoundingClientRect(),
@@ -42,11 +36,11 @@ const toggleNavVar = function (selected_index) {
     const class_name = 'nav__selected';
     // console.log('toogle', selected_index);
     if (selected_index == -1) {
-        if (sections_nav_bar[0].classList.contains(class_name) && document.documentElement.scrollTop < 200)
-            sections_nav_bar[0].classList.remove(class_name);
+        if (sections_anchors_nav_bar[0].classList.contains(class_name) && document.documentElement.scrollTop < 200)
+            sections_anchors_nav_bar[0].classList.remove(class_name);
         return;
     }
-    sections_nav_bar.forEach(function (value, index) {
+    sections_anchors_nav_bar.forEach(function (value, index) {
         if (selected_index == index) {
             value.classList.add(class_name);
         } else {
@@ -73,6 +67,15 @@ const calmedScrollListener = function () {
 };
 
 document.addEventListener('scroll', calmedScrollListener, false);
+
+sections_anchors_nav_bar.forEach(function (anchor, index) {
+    anchor.addEventListener('click', function (event){
+        event.preventDefault();
+        sections[index].scrollIntoView();
+        toggleNavVar(index);
+    })
+
+});
 
 // document.addEventListener('DOMContentLoaded', function () {
 //     document.querySelector('footer').style.backgroundColor = 'purple';
