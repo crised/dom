@@ -1,37 +1,39 @@
-// const sections_anchors_nav_bar = [
-//     document.getElementById('section_1_anchor'),
-//     document.getElementById('section_2_anchor'),
-//     document.getElementById('section_3_anchor')];
+/**
+ *
+ * Manipulating the DOM exercise.
+ * Exercise programmatically builds navigation,
+ * scrolls to anchors from navigation,
+ * and highlights section in viewport upon scrolling.
+ *
+ * Dependencies: None
+ *
+ * JS Version: ES2015/ES6
+ *
+ * JS Standard: ESlint
+ *
+ */
+
+/**
+ * Define Global Variables
+ *
+ */
 
 const sections_anchors_nav_bar = [];
+const section_names = [];
 
 const sections = [
     document.getElementById('section1'),
     document.getElementById('section2'),
     document.getElementById('section3')];
 
-const section_names = [];
+let shouldListenScroll = false;
 
-function populateNavBar() {
-    const navbar = document.getElementById('navbar__list');
-    sections.forEach(function (section, index) {
-        section_names.push(section.dataset.nav);
-        const anchor = document.createElement('a');
-        anchor.id = `section_${index + 1}_anchor`
-        anchor.textContent = section.dataset.nav;
-        anchor.href = '/';
-        anchor.classList.add('nav__unselected');
-        sections_anchors_nav_bar.push(anchor);
-        const li = document.createElement('li');
-        li.appendChild(anchor);
-        navbar.appendChild(li);
-    });
-    console.log(section_names);
 
-}
-
-populateNavBar();
-
+/**
+ * End Global Variables
+ * Start Helper Functions
+ *
+ */
 
 function isElementVisible(el) {
     const rect = el.getBoundingClientRect(),
@@ -53,16 +55,38 @@ function isElementVisible(el) {
     );
 }
 
+/**
+ * End Helper Functions
+ * Begin Main Functions
+ *
+ */
+
+const populateNavBar = function () {
+    const navbar = document.getElementById('navbar__list');
+    sections.forEach(function (section, index) {
+        section_names.push(section.dataset.nav);
+        const anchor = document.createElement('a');
+        anchor.id = `section_${index + 1}_anchor`
+        anchor.textContent = section.dataset.nav;
+        anchor.href = '/';
+        anchor.classList.add('nav__unselected');
+        sections_anchors_nav_bar.push(anchor);
+        const li = document.createElement('li');
+        li.appendChild(anchor);
+        navbar.appendChild(li);
+    });
+}
+
 const toggleNavVar = function (selected_index) {
     const class_name = 'nav__selected';
     // console.log('toogle', selected_index);
-    if (selected_index == -1) {
+    if (selected_index === -1) {
         if (sections_anchors_nav_bar[0].classList.contains(class_name) && document.documentElement.scrollTop < 200)
             sections_anchors_nav_bar[0].classList.remove(class_name);
         return;
     }
     sections_anchors_nav_bar.forEach(function (value, index) {
-        if (selected_index == index) {
+        if (selected_index === index) {
             value.classList.add(class_name);
         } else {
             if (value.classList.contains(class_name)) {
@@ -71,8 +95,6 @@ const toggleNavVar = function (selected_index) {
         }
     });
 };
-
-let shouldListenScroll = false;
 
 const calmedScrollListener = function () {
     setTimeout(function () {
@@ -87,6 +109,13 @@ const calmedScrollListener = function () {
     }
 };
 
+
+/**
+ * End Main Functions
+ * Begin Events
+ *
+ */
+
 document.addEventListener('scroll', calmedScrollListener, false);
 
 sections_anchors_nav_bar.forEach(function (anchor, index) {
@@ -95,11 +124,12 @@ sections_anchors_nav_bar.forEach(function (anchor, index) {
         sections[index].scrollIntoView();
         toggleNavVar(index);
     })
-
 });
 
-const dom_ready = function () {
-    console.log('dom_ready');
-};
+/**
+ * Nav Bar Function call
+ */
+populateNavBar();
 
-document.addEventListener('DOMContentLoaded', dom_ready);
+
+

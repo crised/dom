@@ -1,4 +1,3 @@
-console.log('whass');
 /**
  *
  * Manipulating the DOM exercise.
@@ -19,7 +18,16 @@ console.log('whass');
  *
  */
 
-console.log('HIIIW');
+const sections_anchors_nav_bar = [];
+const section_names = [];
+
+const sections = [
+    document.getElementById('section1'),
+    document.getElementById('section2'),
+    document.getElementById('section3')];
+
+let shouldListenScroll = false;
+
 
 /**
  * End Global Variables
@@ -27,7 +35,25 @@ console.log('HIIIW');
  *
  */
 
-
+function isElementVisible(el) {
+    const rect = el.getBoundingClientRect(),
+        vWidth = window.innerWidth || document.documentElement.clientWidth,
+        vHeight = window.innerHeight || document.documentElement.clientHeight,
+        efp = function (x, y) {
+            return document.elementFromPoint(x, y)
+        };
+    // Return false if it's not in the viewport
+    if (rect.right < 0 || rect.bottom < 0
+        || rect.left > vWidth || rect.top > vHeight)
+        return false;
+    // Return true if any of its four corners are visible
+    return (
+        el.contains(efp(rect.left, rect.top))
+        || el.contains(efp(rect.right, rect.top))
+        || el.contains(efp(rect.right, rect.bottom))
+        || el.contains(efp(rect.left, rect.bottom))
+    );
+}
 
 /**
  * End Helper Functions
@@ -35,13 +61,53 @@ console.log('HIIIW');
  *
  */
 
-// build the nav
+const populateNavBar = function () {
+    const navbar = document.getElementById('navbar__list');
+    sections.forEach(function (section, index) {
+        section_names.push(section.dataset.nav);
+        const anchor = document.createElement('a');
+        anchor.id = `section_${index + 1}_anchor`
+        anchor.textContent = section.dataset.nav;
+        anchor.href = '/';
+        anchor.classList.add('nav__unselected');
+        sections_anchors_nav_bar.push(anchor);
+        const li = document.createElement('li');
+        li.appendChild(anchor);
+        navbar.appendChild(li);
+    });
+}
 
+const toggleNavVar = function (selected_index) {
+    const class_name = 'nav__selected';
+    // console.log('toogle', selected_index);
+    if (selected_index == -1) {
+        if (sections_anchors_nav_bar[0].classList.contains(class_name) && document.documentElement.scrollTop < 200)
+            sections_anchors_nav_bar[0].classList.remove(class_name);
+        return;
+    }
+    sections_anchors_nav_bar.forEach(function (value, index) {
+        if (selected_index == index) {
+            value.classList.add(class_name);
+        } else {
+            if (value.classList.contains(class_name)) {
+                value.classList.remove(class_name);
+            }
+        }
+    });
+};
 
-// Add class 'active' to section when near top of viewport
-
-
-// Scroll to anchor ID using scrollTO event
+const calmedScrollListener = function () {
+    setTimeout(function () {
+        shouldListenScroll = true;
+    }, 200);
+    if (shouldListenScroll) {
+        shouldListenScroll = false;
+        sections.forEach(function (value, index) {
+            if (isElementVisible(value)) return toggleNavVar(index);
+        });
+        toggleNavVar(-1);
+    }
+};
 
 
 /**
@@ -50,10 +116,20 @@ console.log('HIIIW');
  *
  */
 
-// Build menu
+document.addEventListener('scroll', calmedScrollListener, false);
 
-// Scroll to section on link click
+sections_anchors_nav_bar.forEach(function (anchor, index) {
+    anchor.addEventListener('click', function (event) {
+        event.preventDefault();
+        sections[index].scrollIntoView();
+        toggleNavVar(index);
+    })
+});
 
-// Set sections as active
+/**
+ * Nav Bar Function call
+ */
+populateNavBar();
+
 
 
