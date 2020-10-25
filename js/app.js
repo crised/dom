@@ -1,16 +1,37 @@
-console.log('hi')
-const section_1_anchor = document.getElementById('section_1_anchor');
-// consider event delegation
+// const sections_anchors_nav_bar = [
+//     document.getElementById('section_1_anchor'),
+//     document.getElementById('section_2_anchor'),
+//     document.getElementById('section_3_anchor')];
 
-const sections_anchors_nav_bar = [
-    document.getElementById('section_1_anchor'),
-    document.getElementById('section_2_anchor'),
-    document.getElementById('section_3_anchor')];
+const sections_anchors_nav_bar = [];
 
 const sections = [
     document.getElementById('section1'),
     document.getElementById('section2'),
     document.getElementById('section3')];
+
+const section_names = [];
+
+function populateNavBar() {
+    const navbar = document.getElementById('navbar__list');
+    sections.forEach(function (section, index) {
+        section_names.push(section.dataset.nav);
+        const anchor = document.createElement('a');
+        anchor.id = `section_${index + 1}_anchor`
+        anchor.textContent = section.dataset.nav;
+        anchor.href = '/';
+        anchor.classList.add('nav__unselected');
+        sections_anchors_nav_bar.push(anchor);
+        const li = document.createElement('li');
+        li.appendChild(anchor);
+        navbar.appendChild(li);
+    });
+    console.log(section_names);
+
+}
+
+populateNavBar();
+
 
 function isElementVisible(el) {
     const rect = el.getBoundingClientRect(),
@@ -69,7 +90,7 @@ const calmedScrollListener = function () {
 document.addEventListener('scroll', calmedScrollListener, false);
 
 sections_anchors_nav_bar.forEach(function (anchor, index) {
-    anchor.addEventListener('click', function (event){
+    anchor.addEventListener('click', function (event) {
         event.preventDefault();
         sections[index].scrollIntoView();
         toggleNavVar(index);
@@ -77,7 +98,8 @@ sections_anchors_nav_bar.forEach(function (anchor, index) {
 
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     document.querySelector('footer').style.backgroundColor = 'purple';
-// });
-//scrollIntoView();
+const dom_ready = function () {
+    console.log('dom_ready');
+};
+
+document.addEventListener('DOMContentLoaded', dom_ready);
