@@ -21,10 +21,8 @@
 const sections_anchors_nav_bar = [];
 const section_names = [];
 
-const sections = [
-    document.getElementById('section1'),
-    document.getElementById('section2'),
-    document.getElementById('section3')];
+let sections = [];
+let visible_p_sections = [];
 
 let shouldListenScroll = false;
 
@@ -35,7 +33,7 @@ let shouldListenScroll = false;
  *
  */
 
-function isElementVisible(el) {
+const isElementVisible = (el) => {
     const rect = el.getBoundingClientRect(),
         vWidth = window.innerWidth || document.documentElement.clientWidth,
         vHeight = window.innerHeight || document.documentElement.clientHeight,
@@ -55,13 +53,14 @@ function isElementVisible(el) {
     );
 }
 
+
 /**
  * End Helper Functions
  * Begin Main Functions
  *
  */
 
-const populateNavBar = function () {
+const populateNavBar = () => {
     const navbar = document.getElementById('navbar__list');
     sections.forEach(function (section, index) {
         section_names.push(section.dataset.nav);
@@ -75,17 +74,24 @@ const populateNavBar = function () {
         li.appendChild(anchor);
         navbar.appendChild(li);
     });
+    sections_anchors_nav_bar.forEach((anchor, index) => {
+        anchor.addEventListener('click', function (event) {
+            event.preventDefault();
+            sections[index].scrollIntoView();
+            toggleNavVar(index);
+        })
+    });
 }
 
-const toggleNavVar = function (selected_index) {
+const toggleNavVar = (selected_index) => {
+    const startingTime = performance.now();
     const class_name = 'nav__selected';
-    // console.log('toogle', selected_index);
     if (selected_index === -1) {
         if (sections_anchors_nav_bar[0].classList.contains(class_name) && document.documentElement.scrollTop < 200)
             sections_anchors_nav_bar[0].classList.remove(class_name);
         return;
     }
-    sections_anchors_nav_bar.forEach(function (value, index) {
+    sections_anchors_nav_bar.forEach((value, index) => {
         if (selected_index === index) {
             value.classList.add(class_name);
         } else {
@@ -94,17 +100,20 @@ const toggleNavVar = function (selected_index) {
             }
         }
     });
+    const endingTime = performance.now();
+    // console.log('toggleNavBar took ' + (endingTime - startingTime) + ' milliseconds.');
 };
 
-const calmedScrollListener = function () {
+const calmedScrollListener = () => {
     setTimeout(function () {
         shouldListenScroll = true;
-    }, 200);
+    }, 600);
     if (shouldListenScroll) {
         shouldListenScroll = false;
-        sections.forEach(function (value, index) {
+        visible_p_sections.forEach(function (value, index) {
             if (isElementVisible(value)) return toggleNavVar(index);
         });
+
         toggleNavVar(-1);
     }
 };
@@ -116,20 +125,18 @@ const calmedScrollListener = function () {
  *
  */
 
-document.addEventListener('scroll', calmedScrollListener, false);
-
-sections_anchors_nav_bar.forEach(function (anchor, index) {
-    anchor.addEventListener('click', function (event) {
-        event.preventDefault();
-        sections[index].scrollIntoView();
-        toggleNavVar(index);
-    })
-});
 
 /**
  * Nav Bar Function call
  */
-populateNavBar();
 
+const dom_ready = () => {
+    sections = document.querySelectorAll('section');
+    visible_p_sections = document.querySelectorAll('.section__paragraph');
+    populateNavBar();
+    document.addEventListener('scroll', calmedScrollListener, false);
+};
+
+document.addEventListener('DOMContentLoaded', dom_ready);
 
 
