@@ -17,7 +17,6 @@
  * Define Global Variables
  *
  */
-
 const sections_anchors_nav_bar = [];
 const section_names = [];
 
@@ -77,7 +76,7 @@ const populateNavBar = () => {
     sections_anchors_nav_bar.forEach((anchor, index) => {
         anchor.addEventListener('click', function (event) {
             event.preventDefault();
-            sections[index].scrollIntoView();
+            sections[index].scrollIntoView({behavior: 'smooth'});
             toggleNavVar(index);
         })
     });
